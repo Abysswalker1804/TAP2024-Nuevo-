@@ -1,0 +1,37 @@
+.root{
+    -fx-background-image:url('https://e0.pxfuel.com/wallpapers/401/403/desktop-wallpaper-mikoto-urabe-gallery-nazo-no-kanojo-x.jpg');
+    -fx-background-size: 100%;
+    /*
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    */
+}
+
+.menu-bar{
+    -fx-background-color: #D9F1D3;
+    -fx-text-color: #000000;
+    /*
+    -fx-border-width: 2px;
+    */
+}
+
+.menu{
+    -fx-background-color: #D9F1D3;
+}
+
+.label{
+    -fx-background-color: #7AE161;
+}
+
+.menu:hover{
+    -fx-background-color: #7AE161;
+}
+
+-label:hover{
+    -fx-text-color: #000000;
+}
+
+-menu-item:hover{
+    -fx-background-color: #000000;
+    -fx-border-color: #7AE161;
+}

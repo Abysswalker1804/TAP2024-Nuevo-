@@ -30,6 +30,7 @@ public class Calculadora extends Stage{
         vContenedor=new VBox(txtPantalla, gdpTeclado);
         vContenedor.setSpacing(5);
         escena=new Scene(vContenedor, 200,200);
+        escena.getStylesheets().add(getClass().getResource("/estilos/calculadora.css").toString());
     }
 
     private void CrearTeclado(){
@@ -41,14 +42,18 @@ public class Calculadora extends Stage{
                 int finalPos = pos;
                 arBotones[i][j].setOnAction(event -> setValue(arEtiquetas[finalPos]));
                 gdpTeclado.add(arBotones[i][j],j,i);
+
+                if(arEtiquetas[pos]=='+' || arEtiquetas[pos]=='-' || arEtiquetas[pos]=='*' || arEtiquetas[pos]=='/' || arEtiquetas[pos]=='='){
+                    arBotones[i][j].setId("color-operador");
+                }
+
                 pos++;
             }
         }
     }
 
     private void setValue(char simbolo) {
-        if(Integer.parseInt(txtPantalla.getText()) ==0){}
-        txtPantalla.setText("");
-        txtPantalla.appendText(simbolo+"");
+        //if(Integer.parseInt(txtPantalla.getText()) ==0){txtPantalla.setText("");}else{}
+        txtPantalla.setText(simbolo+"");
     }// No manejar excepciones
 }
