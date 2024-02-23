@@ -15,7 +15,7 @@ import java.io.IOException;
 public class HelloApplication extends Application {
     private MenuBar mnbPrincipal;
     private Menu menParcial1, menParcial2, menSalir;
-    private MenuItem mitCalculadora, mitSalir;
+    private MenuItem mitCalculadora, mitSalir, mitMemorama;
     private BorderPane bdpPanel;
     @Override
     public void start(Stage stage) throws IOException {
@@ -36,9 +36,11 @@ public class HelloApplication extends Application {
     private void crearMenu(){
         //Menú primer parcial
         mitCalculadora=new MenuItem("Calculadora");
+        mitMemorama=new MenuItem("Memorama");
         menParcial1=new Menu("Primer Parcial");
-        menParcial1.getItems().addAll(mitCalculadora);
+        menParcial1.getItems().addAll(mitCalculadora,mitMemorama);
         mitCalculadora.setOnAction(event -> new Calculadora());
+        mitMemorama.setOnAction(event -> new Memorama());
 
         //Menú segundo parcial
         menParcial2=new Menu("Segundo Parcial");
