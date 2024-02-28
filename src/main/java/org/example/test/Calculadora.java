@@ -32,7 +32,7 @@ public class Calculadora extends Stage{
         this.show();
     }
     private void CrearUI(){
-        txtPantalla=new TextField("0.0");
+        txtPantalla=new TextField("0");
         txtPantalla.setEditable(false);
         gdpTeclado=new GridPane();
         CrearTeclado();
@@ -90,7 +90,8 @@ public class Calculadora extends Stage{
     }
 
     private void setValue(char simbolo) {
-        if(txtPantalla.getText().equals("0.0") || txtPantalla.getText().equals("ERROR Math") || flagIgual){
+        if(txtPantalla.getText().equals("0.0") || txtPantalla.getText().equals("ERROR Math")
+                || flagIgual || txtPantalla.getText().equals("ERROR Syntax")){
             txtPantalla.setText("");
             txtPantalla.setText(simbolo+"");
             flagIgual=false;
@@ -100,59 +101,101 @@ public class Calculadora extends Stage{
         }
     }// No manejar excepciones
 
-    private void sumar(){//Falta controlar si son números muy grandes
-        numAnterior=Double.parseDouble(txtPantalla.getText());
-        chrOperacion='s';
-        txtPantalla.setText("");
+    private boolean isThatANumber(String txt){
+        boolean flagExito=true;
+        if(txt.equals("ERROR Syntax") || txt.equals("ERROR Math")){
+            flagExito=false;
+        }else{
+            short puntos=0;
+            for (int i=0; i<txt.length(); i++){
+                if(txt.charAt(i)=='.')
+                    puntos++;
+            }
+            if(puntos>1)
+                flagExito=false;
+        }
+        return flagExito;
+    }
+    private void sumar(){
+        if(isThatANumber(txtPantalla.getText()) && !txtPantalla.getText().isEmpty()){
+            numAnterior=Double.parseDouble(txtPantalla.getText());
+            chrOperacion='s';
+            txtPantalla.setText("");
+        }else{
+            txtPantalla.setText("ERROR Syntax");
+        }
     }
     private void restar(){
-        numAnterior=Double.parseDouble(txtPantalla.getText());
-        chrOperacion='r';
-        txtPantalla.setText("");
+        if(isThatANumber(txtPantalla.getText()) && !txtPantalla.getText().isEmpty()){
+            numAnterior=Double.parseDouble(txtPantalla.getText());
+            chrOperacion='r';
+            txtPantalla.setText("");
+        }else{
+            txtPantalla.setText("ERROR Syntax");
+        }
     }
     private void multiplicar(){
-        numAnterior=Double.parseDouble(txtPantalla.getText());
-        chrOperacion='m';
-        txtPantalla.setText("");
+        if(isThatANumber(txtPantalla.getText()) && !txtPantalla.getText().isEmpty()){
+            numAnterior=Double.parseDouble(txtPantalla.getText());
+            chrOperacion='m';
+            txtPantalla.setText("");
+        }else{
+            txtPantalla.setText("ERROR Syntax");
+        }
     }
     private void dividir(){
-        numAnterior=Double.parseDouble(txtPantalla.getText());
-        chrOperacion='d';
-        txtPantalla.setText("");
+        if(isThatANumber(txtPantalla.getText()) && !txtPantalla.getText().isEmpty()){
+            numAnterior=Double.parseDouble(txtPantalla.getText());
+            chrOperacion='d';
+            txtPantalla.setText("");
+        }else{
+            txtPantalla.setText("ERROR Syntax");
+        }
     }
 
-    private void punto(){//Hay que controlar si hay Error Math en pantalla
+    private void punto(){
         String num=txtPantalla.getText();
-        for(int i=0; i<num.length();i++){
-            if(num.charAt(i) == '.'){
-                txtPantalla.setText(num.substring(0,i));
-            }
+        if(num.equals(".") || num.isEmpty() || !isThatANumber(num) || num.equals("ERROR Math") || num.equals("ERROR Syntax")){
+            txtPantalla.setText("0.");
+        }else{
+            setValue(arEtiquetas[13]);
         }
     }
     private void igual(){
-        double numActual=Double.parseDouble(txtPantalla.getText()), numResultado=0;
-        boolean flagError=false;
-        txtPantalla.setText("");
-        switch(chrOperacion){
-            case 's':
-                numResultado=numAnterior+numActual;
-                break;
-            case 'r':
-                numResultado=numAnterior-numActual;
-                break;
-            case 'm':
-                numResultado=numAnterior*numActual;
-                break;
-            case 'd':
-                if(numActual !=0)
-                    numResultado=numAnterior/numActual;
+        if(txtPantalla.getText().equals("ERROR Syntax") || txtPantalla.getText().equals("ERROR Math") || !isThatANumber(txtPantalla.getText())){
+            txtPantalla.setText("ERROR Syntax");
+        }else{
+            if(numAnterior!=0 || txtPantalla.getText().isEmpty()){
+                double numActual=Double.parseDouble(txtPantalla.getText()), numResultado=0;
+                boolean flagError=false;
+                txtPantalla.setText("");
+                switch(chrOperacion){
+                    case 's':
+                        numResultado=numAnterior+numActual;
+                        break;
+                    case 'r':
+                        numResultado=numAnterior-numActual;
+                        break;
+                    case 'm':
+                        numResultado=numAnterior*numActual;
+                        break;
+                    case 'd':
+                        if(numActual !=0)
+                            numResultado=numAnterior/numActual;
+                        else
+                            flagError=true;
+                }
+                numAnterior=0;
+                flagIgual=true;
+                if(flagError)
+                    txtPantalla.setText("ERROR Math");
                 else
-                    flagError=true;
+                    txtPantalla.setText(numResultado+"");
+            }else{
+                if(Double.parseDouble(txtPantalla.getText())==0){
+                    txtPantalla.setText("ERROR Math");
+                }
+            }
         }
-        flagIgual=true;
-        if(flagError)
-            txtPantalla.setText("ERROR Math");
-        else
-            txtPantalla.setText(numResultado+"");
     }
 }

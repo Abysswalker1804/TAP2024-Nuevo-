@@ -6,4 +6,7 @@ module org.example.test {
 
     opens org.example.test to javafx.fxml;
     exports org.example.test;
+
+    requires java.sql;
+    requires mysql.connector.j;
 }
