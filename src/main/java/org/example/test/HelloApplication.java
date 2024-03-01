@@ -9,6 +9,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import org.example.test.modelos.Conexion;
 
 import java.io.IOException;
 
@@ -26,12 +27,12 @@ public class HelloApplication extends Application {
         bdpPanel.setTop(mnbPrincipal);
         Scene scene=new Scene(bdpPanel);
         scene.getStylesheets().add(getClass().getResource("/estilos/main.css").toString());
-        stage.setTitle("Hello!");
+        stage.setTitle("Tópicos Avazados de Programación - 2024!");
         stage.setScene(scene);
         stage.show();
         stage.setMaximized(true);
 
-
+        Conexion.crearConexion();
     }
     private void crearMenu(){
         //Menú primer parcial

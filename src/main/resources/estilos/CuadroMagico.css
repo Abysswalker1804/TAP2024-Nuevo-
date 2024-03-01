@@ -1,0 +1,12 @@
+#color-boton-generar{
+    -fx-background-color: linear-gradient(#FFFFFF,#66FFD3);
+}
+#color-boton-borrar{
+    -fx-background-color: linear-gradient(#FFFFFF,#CE2929);
+}
+#color-boton-llenar{
+    -fx-background-color: linear-gradient(#FFFFFF,#50A9F4);
+}
+#color-label-cuadro{
+    -fx-background-color: #D3DDF6
+}
