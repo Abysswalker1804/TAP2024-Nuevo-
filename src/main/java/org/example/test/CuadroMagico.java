@@ -132,7 +132,11 @@ public class CuadroMagico extends Stage{
         gdpCuadroMagico.getChildren().clear();
         Label etiqueta;
         try{
-            fileOut=new FileOutputStream("C:\\Users\\Tadeo\\JavaProjects\\TAP2024-Nuevo-\\src\\main\\java\\org\\example\\test\\cuadro.dat");//Cambiar ruta en ordenador
+
+            fileOut=new FileOutputStream("C:\\Users\\tadeo\\JavaProjects\\Test\\src\\main\\java\\org\\example\\test\\cuadro.dat");//Cambiar ruta en ordenador
+
+            fileOut=new FileOutputStream("C:\\Users\\tadeo\\JavaProjects\\Test\\src\\main\\java\\org\\example\\test\\cuadro.dat");//Cambiar ruta en ordenador
+
             salida_oos=new ObjectOutputStream(fileOut);
             CeldaArchivos celda;
             for(int i=0, j=0, v_cont=1; i<posx && j<posy;){
@@ -169,7 +173,10 @@ public class CuadroMagico extends Stage{
             Label etiqueta;
             ObservableList<Node> children = gdpCuadroMagico.getChildren();
             try{
-                fileIn=new FileInputStream("C:\\Users\\Tadeo\\JavaProjects\\TAP2024-Nuevo-\\src\\main\\java\\org\\example\\test\\cuadro.dat");//Cambiar ruta en ordenador
+
+                fileIn=new FileInputStream("C:\\Users\\tadeo\\JavaProjects\\Test\\src\\main\\java\\org\\example\\test\\cuadro.dat");//Cambiar ruta en ordenador
+                fileIn=new FileInputStream("C:\\Users\\tadeo\\JavaProjects\\Test\\src\\main\\java\\org\\example\\test\\cuadro.dat");//Cambiar ruta en ordenador
+
                 entrada_ois=new ObjectInputStream(fileIn);
                 Object objeto;
                 CeldaArchivos celda;
