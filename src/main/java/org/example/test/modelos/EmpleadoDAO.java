@@ -10,12 +10,60 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 public class EmpleadoDAO implements Serializable{
-    int idEmpleado;
-    String nomEmpleado;
-    String rfcEmpleado;
-    float salario;
-    String telefono;
-    String direccion;
+    private int idEmpleado;
+    private String nomEmpleado;
+    private String rfcEmpleado;
+    private float salario;
+    private String telefono;
+    private String direccion;
+
+    public int getIdEmpleado() {
+        return idEmpleado;
+    }
+
+    public void setIdEmpleado(int idEmpleado) {
+        this.idEmpleado = idEmpleado;
+    }
+
+    public String getNomEmpleado() {
+        return nomEmpleado;
+    }
+
+    public void setNomEmpleado(String nomEmpleado) {
+        this.nomEmpleado = nomEmpleado;
+    }
+
+    public String getRfcEmpleado() {
+        return rfcEmpleado;
+    }
+
+    public void setRfcEmpleado(String rfcEmpleado) {
+        this.rfcEmpleado = rfcEmpleado;
+    }
+
+    public float getSalario() {
+        return salario;
+    }
+
+    public void setSalario(float salario) {
+        this.salario = salario;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
 
     public void INSERTAR(){
         String query="INSERT INTO empleado(nomEmpleado, rfcEmpleado, salario, telefono, direccion) VALUES('"+nomEmpleado+"','"+rfcEmpleado+"',"+salario+" ,'"+telefono+"','"+direccion+"')";

@@ -16,7 +16,7 @@ import java.io.IOException;
 public class HelloApplication extends Application {
     private MenuBar mnbPrincipal;
     private Menu menParcial1, menParcial2, menSalir;
-    private MenuItem mitCalculadora, mitSalir, mitMemorama, mitCuadroMagico;
+    private MenuItem mitCalculadora, mitSalir, mitMemorama, mitCuadroMagico, mitEmpleado;
     private BorderPane bdpPanel;
     @Override
     public void start(Stage stage) throws IOException {
@@ -27,7 +27,7 @@ public class HelloApplication extends Application {
         bdpPanel.setTop(mnbPrincipal);
         Scene scene=new Scene(bdpPanel);
         scene.getStylesheets().add(getClass().getResource("/estilos/main.css").toString());
-        stage.setTitle("Tópicos Avazados de Programación - 2024!");
+        stage.setTitle("Tópicos Avazados de Programación - 2024");
         stage.setScene(scene);
         stage.show();
         stage.setMaximized(true);
@@ -40,10 +40,12 @@ public class HelloApplication extends Application {
         mitMemorama=new MenuItem("Memorama");
         mitCuadroMagico=new MenuItem("Cuadro Mágico");
         menParcial1=new Menu("Primer Parcial");
-        menParcial1.getItems().addAll(mitCalculadora, mitMemorama, mitCuadroMagico);
+        mitEmpleado=new MenuItem("Empleado");
+        menParcial1.getItems().addAll(mitCalculadora, mitMemorama, mitCuadroMagico, mitEmpleado);
         mitCalculadora.setOnAction(event -> new Calculadora());
         mitMemorama.setOnAction(event -> new Memorama());
         mitCuadroMagico.setOnAction(event -> new CuadroMagico());
+        mitEmpleado.setOnAction(event -> new EmpleadoTaqueria());
 
         //Menú segundo parcial
         menParcial2=new Menu("Segundo Parcial");

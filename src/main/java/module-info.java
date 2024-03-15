@@ -7,7 +7,9 @@ module org.example.test {
     opens org.example.test to javafx.fxml;
     exports org.example.test;
 
+    requires org.kordamp.bootstrapfx.core;
     requires java.sql;
     requires mysql.connector.j;
     requires java.desktop;
+    opens org.example.test.modelos;
 }

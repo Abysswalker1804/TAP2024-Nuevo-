@@ -10,3 +10,6 @@
 #color-label-cuadro{
     -fx-background-color: #D3DDF6
 }
+.root{
+    -fx-background-color: linear-gradient(#b5dbd5, #01f5c9);
+}
