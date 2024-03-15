@@ -15,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import java.util.Timer;
+import java.util.TimerTask;
 
 public class Memorama extends Stage{
     private Scene escena;
@@ -219,22 +220,30 @@ public class Memorama extends Stage{
     }
     private void Destapar(int y, int x, String ruta){
         if(blnDestapado){//Revisar que no sea el mismo botón
-            if(rutaDestapada.equals(ruta)){
+            if(rutaDestapada.equals(ruta) && btnDestapado!=arBotones[y][x]){
                 arBotones[y][x].getGraphic().setVisible(true);
                 btnDestapado.getGraphic().setVisible(true);
                 btnDestapado=null;
                 rutaDestapada="";
                 blnDestapado=false;
             }else{
-                blnDestapado=false;
-                arBotones[y][x].getGraphic().setVisible(false);
-                btnDestapado.getGraphic().setVisible(false);
+                arBotones[y][x].getGraphic().setVisible(true);
+                tmrTiempo.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        //System.out.println("2 segundos");
+                        blnDestapado=false;
+                        arBotones[y][x].getGraphic().setVisible(false);
+                        btnDestapado.getGraphic().setVisible(false);
+                    }
+                },500);
             }
         }else{
             arBotones[y][x].getGraphic().setVisible(true);
             btnDestapado=arBotones[y][x];
             rutaDestapada=ruta;
             blnDestapado=true;
+
         }
         //"C:\Users\tadeo\JavaProjects\Test\src\main\resources\images" ruta para comparar
     }
