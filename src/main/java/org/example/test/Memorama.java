@@ -34,7 +34,7 @@ public class Memorama extends Stage {
     private byte filas, columnas, pares, pntj1=0, pntj2=0;
     private boolean blnDestapado = false, blnJugador;//blnJugador: true ->Jugador1 ;false->Jugador2
     private String rutaDestapada;
-    private int botonesRestantes, alterSegundos=30;
+    private int botonesRestantes, contTurno;
 
     public Memorama() {
         CrearUI();
@@ -145,6 +145,7 @@ public class Memorama extends Stage {
     }*/
     private void Revolver_N() {
         if (ValidarDimensiones()) {
+            contTurno=0;
             blnJugador=true;
             pntj1 = pntj2= 0;
             lblJugador1.setId("color-Jugador-Turno");
@@ -245,13 +246,14 @@ public class Memorama extends Stage {
     private void Destapar(int y, int x, String ruta) {
         if (blnDestapado) {//Revisar que no sea el mismo botón
             if (rutaDestapada.equals(ruta) && btnDestapado != arBotones[y][x]) {//El par se encontró
+                if(contTurno>0){contTurno--;}
                 botonesRestantes--;
                 if(blnJugador) {
                     pntj1++;
                     lblJugador1.setText("Jugador 1      Puntos:"+pntj1);
                 }else{
                     pntj2++;
-                    lblJugador2.setText("Jugador 1      Puntos:"+pntj2);
+                    lblJugador2.setText("Jugador 2      Puntos:"+pntj2);
                 }
                 arBotones[y][x].getGraphic().setVisible(true);
                 btnDestapado.getGraphic().setVisible(true);
@@ -270,18 +272,22 @@ public class Memorama extends Stage {
                     MensajeGanador();
                 }
             } else {//No era el par correcto
-                if(blnJugador){
-                    lblJugador1.setId("color-Jugador-NoTurno");
-                    lblJugador2.setId("color-Jugador-Turno");
-                    blnJugador=false;
-                    tmrCuentaRegresiva.cancel();
-                    CuentaRegresiva();
-                }else{
-                    lblJugador1.setId("color-Jugador-Turno");
-                    lblJugador2.setId("color-Jugador-NoTurno");
-                    blnJugador=true;
-                    tmrCuentaRegresiva.cancel();
-                    CuentaRegresiva();
+                contTurno++;
+                if(contTurno==2){
+                    if(blnJugador){
+                        lblJugador1.setId("color-Jugador-NoTurno");
+                        lblJugador2.setId("color-Jugador-Turno");
+                        blnJugador=false;
+                        tmrCuentaRegresiva.cancel();
+                        CuentaRegresiva();
+                    }else{
+                        lblJugador1.setId("color-Jugador-Turno");
+                        lblJugador2.setId("color-Jugador-NoTurno");
+                        blnJugador=true;
+                        tmrCuentaRegresiva.cancel();
+                        CuentaRegresiva();
+                    }
+                    contTurno=0;
                 }
                 arBotones[y][x].getGraphic().setVisible(true);
                 tmrTiempo.schedule(new TimerTask() {
@@ -370,7 +376,9 @@ public class Memorama extends Stage {
         lblTiempo.setId("color-Timer-Desactivado");
         lblTiempo.setText("00:00");
         lblJugador1.setId("color-Timer-Desactivado");
+        lblJugador1.setText("Jugador 1      Puntos:0");
         lblJugador2.setId("color-Timer-Desactivado");
+        lblJugador2.setText("Jugador 2      Puntos:0");
         btnDetener.setVisible(false);
         btnRevolver.setDisable(false);
     }
