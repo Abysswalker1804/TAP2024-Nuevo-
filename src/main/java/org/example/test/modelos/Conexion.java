@@ -13,9 +13,10 @@ public class Conexion{
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection=DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/"+DB+"?allowPublicKeyRetrieval=true&useSSL=false",USER,PWD);
-             System.out.println("Conexion.crearConexion()> Conexión exitosa!");
+             System.out.println("Conexion.crearConexion()> Conexión exitosa! :)");
         }catch(Exception e){
-            e.printStackTrace();
+            System.out.println("Conexion.crearConexion()> Conexión fallida! :(");
+            //e.printStackTrace();
         }
     }
 }
