@@ -262,7 +262,7 @@ public class Memorama extends Stage {
                 btnDestapado = null;
                 rutaDestapada = "";
                 blnDestapado = false;
-                btnDetener.setVisible(false);
+                //btnDetener.setVisible(false);
                 tmrCuentaRegresiva.cancel();
                 CuentaRegresiva();
                 if (botonesRestantes == 0) {
