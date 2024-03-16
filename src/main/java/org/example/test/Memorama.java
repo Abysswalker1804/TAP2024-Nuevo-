@@ -258,7 +258,9 @@ public class Memorama extends Stage {
                     lblJugador2.setText("Jugador 2      Puntos:"+pntj2);
                 }
                 arBotones[y][x].getGraphic().setVisible(true);
+                arBotones[y][x].setDisable(true);
                 btnDestapado.getGraphic().setVisible(true);
+                btnDestapado.setDisable(true);
                 btnDestapado = null;
                 rutaDestapada = "";
                 blnDestapado = false;
