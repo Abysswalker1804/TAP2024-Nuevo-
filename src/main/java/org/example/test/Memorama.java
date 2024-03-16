@@ -352,7 +352,7 @@ public class Memorama extends Stage {
                         Platform.runLater(() ->lblTiempo.setText("00:"+segundos));
                     segundos--;
                 }else{
-                    Platform.runLater(()->System.out.println("Cambia de turno"));
+                    //Platform.runLater(()->System.out.println());
                     if(blnJugador){
                         lblJugador1.setId("color-Jugador-NoTurno");
                         lblJugador2.setId("color-Jugador-Turno");
