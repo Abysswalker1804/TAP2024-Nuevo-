@@ -214,15 +214,19 @@ public class Memorama extends Stage {
                     flag = true;
                     break;
                 default:
-                    txtDimensiones.setText("Entrada no válida");
+                    strNum="*"+strNum;
                     flag = false;
                     i = cad.length();
             }
         }
-        if (flag && strNum.length()<=2 && Byte.parseByte(strNum) <= 15) {
+        if (flag && strNum.length()<=2 && Byte.parseByte(strNum) <= 15 && Byte.parseByte(strNum)>=3) {
             pares = Byte.parseByte(strNum);
         }else{
-            txtDimensiones.setText("Máximo 15 pares");
+            if(strNum.charAt(0)=='*'){
+                txtDimensiones.setText("Entrada no válida");
+            }else{
+                txtDimensiones.setText("Máximo 15, mínimo 3");
+            }
             flag=false;
         }
         return flag;
