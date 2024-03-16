@@ -346,7 +346,7 @@ public class Memorama extends Stage {
                     //if(blnParEncontrado){
                       //  segundos=30;
                     //}
-                    if(segundos<10)
+                    if(segundos<11)
                         Platform.runLater(() ->lblTiempo.setText("00:0"+segundos));
                     else
                         Platform.runLater(() ->lblTiempo.setText("00:"+segundos));
@@ -366,7 +366,7 @@ public class Memorama extends Stage {
                         tmrCuentaRegresiva.cancel();
                         CuentaRegresiva();
                     }
-                    tmrCuentaRegresiva.cancel();
+                    //tmrCuentaRegresiva.cancel();
                 }
             }
         };
