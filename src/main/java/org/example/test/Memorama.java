@@ -148,6 +148,8 @@ public class Memorama extends Stage {
             contTurno=0;
             blnJugador=true;
             pntj1 = pntj2= 0;
+            lblJugador1.setText("Jugador 1      Puntos:0");
+            lblJugador2.setText("Jugador 2      Puntos:0");
             lblJugador1.setId("color-Jugador-Turno");
             lblJugador2.setId("color-Jugador-NoTurno");
             btnDetener.setVisible(true);
