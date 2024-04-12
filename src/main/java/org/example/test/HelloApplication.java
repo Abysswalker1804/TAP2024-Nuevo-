@@ -9,6 +9,9 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import org.example.test.Vistas.Pista;
+import org.example.test.Vistas.Taqueria;
+import org.example.test.components.Hilo;
 import org.example.test.modelos.Conexion;
 
 import java.io.IOException;
@@ -16,7 +19,7 @@ import java.io.IOException;
 public class HelloApplication extends Application {
     private MenuBar mnbPrincipal;
     private Menu menParcial1, menParcial2, menSalir;
-    private MenuItem mitCalculadora, mitSalir, mitMemorama, mitCuadroMagico, mitEmpleado;
+    private MenuItem mitCalculadora, mitSalir, mitMemorama, mitCuadroMagico, mitTaqueria, mitPista;
     private BorderPane bdpPanel;
     @Override
     public void start(Stage stage) throws IOException {
@@ -32,7 +35,7 @@ public class HelloApplication extends Application {
         stage.show();
         stage.setMaximized(true);
 
-        Conexion.crearConexion();
+        Conexion.crearConexion();//Necesario para empleado
     }
     private void crearMenu(){
         //Menú primer parcial
@@ -40,15 +43,20 @@ public class HelloApplication extends Application {
         mitMemorama=new MenuItem("Memorama");
         mitCuadroMagico=new MenuItem("Cuadro Mágico");
         menParcial1=new Menu("Primer Parcial");
-        mitEmpleado=new MenuItem("Empleado");
-        menParcial1.getItems().addAll(mitCalculadora, mitMemorama, mitCuadroMagico, mitEmpleado);
+        menParcial1.getItems().addAll(mitCalculadora, mitMemorama, mitCuadroMagico);
         mitCalculadora.setOnAction(event -> new Calculadora());
         mitMemorama.setOnAction(event -> new Memorama());
         mitCuadroMagico.setOnAction(event -> new CuadroMagico());
-        mitEmpleado.setOnAction(event -> new EmpleadoTaqueria());
+
 
         //Menú segundo parcial
         menParcial2=new Menu("Segundo Parcial");
+        mitPista=new MenuItem("Pista");
+        mitTaqueria=new MenuItem("Taqueria");
+        mitPista.setOnAction(event -> new Pista());
+        mitTaqueria.setOnAction(event -> new Taqueria());
+        menParcial2.getItems().addAll(mitPista,mitTaqueria);
+
 
         //Menú salir
         mitSalir=new MenuItem("Salir");

@@ -1,0 +1,15 @@
+.root{
+    -fx-background-color: linear-gradient(#FFFFFF,#FC8A08);
+}
+#boton-available{
+    -fx-background-color: #B7FEA2;
+    -fx-border-width: 2px;
+    -fx-border-color: black;
+    -fx-font-weight: bold;
+}
+#boton-NOT-available{
+    -fx-background-color: #FF5B5B;
+    -fx-border-width: 2px;
+    -fx-border-color: black;
+    -fx-font-weight: bold;
+}
