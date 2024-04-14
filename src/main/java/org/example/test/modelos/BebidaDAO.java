@@ -2,11 +2,11 @@ package org.example.test.modelos;
 
 import java.sql.Statement;
 
-public class AntojitoDAO {
+public class BebidaDAO {
     private char cve;
     private double precioUnitario;
     private String descripcion;
-    private byte[] imagen; //Cambiar a mediumblob
+    private byte[] imagen;//Cambiar a mediumblob
     private String nombre;//Añadir nombre a la tabla
 
     public char getCve() {
@@ -48,7 +48,6 @@ public class AntojitoDAO {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-
     public void INSERTAR(String ruta){
         String query="INSERT INTO antojito(cve,precioUnitario,descripcion,imagen,nombre) VALUES('"+cve+"',"+precioUnitario+",'"+descripcion+"',LOAD_FILE('"+ruta+"'),'"+nombre+"')";
         try{

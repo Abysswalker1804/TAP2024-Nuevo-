@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
+import org.example.test.Vistas.Administracion;
 import org.example.test.components.ButtonCell;
 import org.example.test.modelos.EmpleadoDAO;
 import org.kordamp.bootstrapfx.BootstrapFX;
@@ -22,7 +23,7 @@ public class EmpleadoTaqueria extends Stage{
     private BorderPane bpPrincipal;
     private ToolBar tlbMenu;
     private Scene escena;
-    private Button btnAgregarEmpleado;
+    private Button btnAgregarEmpleado, btnRegresar;
     private TableView<EmpleadoDAO> tbvEmpleados;
     public EmpleadoTaqueria(){
         CrearUI();
@@ -38,11 +39,16 @@ public class EmpleadoTaqueria extends Stage{
         btnAgregarEmpleado.setGraphic(imvEmp);
         btnAgregarEmpleado.setPrefSize(50, 50);
         btnAgregarEmpleado.setOnAction(event -> new EmpleadosForm(tbvEmpleados,null));
+        //Regresar
+        btnRegresar=new Button("Regresar");
+        btnRegresar.setOnAction(event -> Regresar());
+
         tlbMenu=new ToolBar(btnAgregarEmpleado);
         CrearTable();
         bpPrincipal=new BorderPane();
         bpPrincipal.setTop(tlbMenu);
         bpPrincipal.setCenter(tbvEmpleados);
+        bpPrincipal.setBottom(btnRegresar);
 
         pnlPrincipal=new Panel("Taquería");
         pnlPrincipal.getStyleClass().add("panel-primary");
@@ -91,5 +97,10 @@ public class EmpleadoTaqueria extends Stage{
         tbvEmpleados. getColumns().addAll(tbcNomEmp,tbcRfcEmp,tbcSueldoEmp,tbcTelEmp,tbcDirEmp,tbcEditar,tbcEliminar);
         tbvEmpleados.setItems(objEmp.CONSULTAR());
 
+    }
+
+    private void Regresar(){
+        new Administracion();
+        this.close();
     }
 }

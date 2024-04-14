@@ -14,6 +14,7 @@ import org.example.test.Vistas.Taqueria;
 import org.example.test.components.Hilo;
 import org.example.test.modelos.Conexion;
 
+import javafx.scene.image.ImageView;
 import java.io.IOException;
 
 public class HelloApplication extends Application {

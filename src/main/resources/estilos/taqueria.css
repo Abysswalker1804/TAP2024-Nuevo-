@@ -13,3 +13,9 @@
     -fx-border-color: black;
     -fx-font-weight: bold;
 }
+#login{
+    -fx-background-color: linear-gradient(#FFFFFF,#95D4FF);
+}
+#admin{
+    -fx-background-color: linear-gradient(#FFFFFF,#67AB69);
+}
