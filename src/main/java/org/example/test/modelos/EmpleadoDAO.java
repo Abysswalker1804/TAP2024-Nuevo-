@@ -16,6 +16,7 @@ public class EmpleadoDAO implements Serializable{
     private float salario;
     private String telefono;
     private String direccion;
+    private int ventas;
 
     public int getIdEmpleado() {
         return idEmpleado;
@@ -65,8 +66,16 @@ public class EmpleadoDAO implements Serializable{
         this.direccion = direccion;
     }
 
+    public int getVentas() {
+        return ventas;
+    }
+
+    public void setVentas(int ventas) {
+        this.ventas = ventas;
+    }
+
     public void INSERTAR(){
-        String query="INSERT INTO empleado(nomEmpleado, rfcEmpleado, salario, telefono, direccion) VALUES('"+nomEmpleado+"','"+rfcEmpleado+"',"+salario+" ,'"+telefono+"','"+direccion+"')";
+        String query="INSERT INTO empleado(nomEmpleado, rfcEmpleado, salario, telefono, direccion, ventas) VALUES('"+nomEmpleado+"','"+rfcEmpleado+"',"+salario+" ,'"+telefono+"','"+direccion+"',"+0+")";
         try{
             Statement stmt=Conexion.connection.createStatement();//El statement se usa para interactuar con sql
             stmt.executeUpdate(query);//Usar para insertar, actualizar o eliminar
@@ -75,7 +84,7 @@ public class EmpleadoDAO implements Serializable{
         }
     }
     public void ACTUALIZAR(){
-        String query="UPDATE empleado SET nomEmpleado='"+nomEmpleado+"',rfcEmpleado='"+rfcEmpleado+"',salario="+salario+",telefono='"+telefono+"',direccion='"+direccion+"' WHERE idEmpleado="+idEmpleado;
+        String query="UPDATE empleado SET nomEmpleado='"+nomEmpleado+"',rfcEmpleado='"+rfcEmpleado+"',salario="+salario+",telefono='"+telefono+"',direccion='"+direccion+"',ventas="+ventas+" WHERE idEmpleado="+idEmpleado;
         try{
             Statement stmt=Conexion.connection.createStatement();
             stmt.executeUpdate(query);

@@ -50,7 +50,7 @@ public class EmpleadoTaqueria extends Stage{
         bpPrincipal.setCenter(tbvEmpleados);
         bpPrincipal.setBottom(btnRegresar);
 
-        pnlPrincipal=new Panel("Taquería");
+        pnlPrincipal=new Panel("Empleados de Taquería");
         pnlPrincipal.getStyleClass().add("panel-primary");
         pnlPrincipal.setBody(bpPrincipal);
 

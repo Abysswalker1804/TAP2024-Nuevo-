@@ -3,12 +3,12 @@ package org.example.test;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.scene.control.Button;
 import org.example.test.modelos.EmpleadoDAO;
+
+import java.util.Optional;
 
 
 public class EmpleadosForm extends Stage {
@@ -19,6 +19,7 @@ public class EmpleadosForm extends Stage {
     private TextField[] arTxtCampos=new TextField[5];
     private String[] arPrompts={"Nombre del Empleado","RFC del Empleado", "Sueldo del Empleado", "Telefono del Empleado", "Dirección del Empleado",};
     private Button btnGuardar;
+    private boolean flag;
     public EmpleadosForm(TableView<EmpleadoDAO> tbvEmp, EmpleadoDAO objEmp){
         tbvEmpleados=tbvEmp;
         this.objEmp=(objEmp==null)?new EmpleadoDAO():objEmp;
@@ -51,21 +52,53 @@ public class EmpleadosForm extends Stage {
         arTxtCampos[4].setText(objEmp.getDireccion());
     }
     private void GuardarEmpleado(){
-        objEmp.setNomEmpleado(arTxtCampos[0].getText());
-        objEmp.setRfcEmpleado(arTxtCampos[1].getText());
-        objEmp.setSalario(Float.parseFloat(arTxtCampos[2].getText()));
-        objEmp.setTelefono(arTxtCampos[3].getText());
+        //Controlar entradas
+        objEmp.setNomEmpleado((arTxtCampos[0].getText()));
+        flag=!objEmp.getNomEmpleado().isEmpty();
+        if(arTxtCampos[1].getText().length()==13){
+            objEmp.setRfcEmpleado(arTxtCampos[1].getText());
+            flag=true;
+        }else{flag=false;}
+        try{
+            objEmp.setSalario(Float.parseFloat(arTxtCampos[2].getText()));
+            flag=true;
+        }catch(Exception e){flag=false;}
+        try{
+            int integer=Integer.parseInt(arTxtCampos[3].getText());
+            if(arTxtCampos[3].getText().length()==10){
+                objEmp.setTelefono(arTxtCampos[3].getText());
+                flag=true;
+            }else{flag=false;}
+        }catch(Exception e){flag=false;}
         objEmp.setDireccion(arTxtCampos[4].getText());
-        if(objEmp.getIdEmpleado()>0)
-            objEmp.ACTUALIZAR();
-        else
-            objEmp.INSERTAR();
-        tbvEmpleados.setItems(objEmp.CONSULTAR());
-        tbvEmpleados.refresh();
-        arTxtCampos[0].clear();
-        arTxtCampos[1].clear();
-        arTxtCampos[2].clear();
-        arTxtCampos[3].clear();
-        arTxtCampos[4].clear();
+        flag=!objEmp.getDireccion().isEmpty();
+        if(flag){
+            objEmp.setVentas(0);
+            if(objEmp.getIdEmpleado()>0)
+                objEmp.ACTUALIZAR();
+            else
+                objEmp.INSERTAR();
+            tbvEmpleados.setItems(objEmp.CONSULTAR());
+            tbvEmpleados.refresh();
+            arTxtCampos[0].clear();
+            arTxtCampos[1].clear();
+            arTxtCampos[2].clear();
+            arTxtCampos[3].clear();
+            arTxtCampos[4].clear();
+        }else {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText("Algo salió mal...");
+            alert.setContentText("Alguno de los campos no fue llenado correctamente.\nRevíse de nuevo");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (!(result.get() == ButtonType.OK)) {
+                this.close();
+                /*arTxtCampos[0].clear();
+                arTxtCampos[1].clear();
+                arTxtCampos[2].clear();
+                arTxtCampos[3].clear();
+                arTxtCampos[4].clear();*/
+            }
+        }
     }
 }

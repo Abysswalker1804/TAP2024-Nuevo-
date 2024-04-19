@@ -4,6 +4,8 @@ import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -15,13 +17,22 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.event.EventHandler;
 import org.example.test.EmpleadoTaqueria;
+import org.example.test.modelos.Conexion;
+import org.example.test.modelos.EmpleadoDAO;
+import org.kordamp.bootstrapfx.BootstrapFX;
+import org.kordamp.bootstrapfx.scene.layout.Panel;
 
+import java.awt.*;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Optional;
 
 public class Taqueria extends Stage {
+    private Panel pnlTitulo;
     private Scene escena;
     private BorderPane bdpPrincipal;
     private VBox vLeft;
+    private HBox hTop;
     private GridPane gdpMesas, gdpAntojitos, gdpBebidas;
     private Button[][] Mesas=new Button[4][3];
     private Button[] Bebidas=new Button[3];
@@ -51,9 +62,16 @@ public class Taqueria extends Stage {
         //Antojitos
         gdpAntojitos=new GridPane();
         InicializarBebidas();
+        //hTop
+        hTop=new HBox();
 
         bdpPrincipal.setLeft(vLeft);
-        escena=new Scene(bdpPrincipal);
+        //Panel
+        pnlTitulo=new Panel("Taquería los Inges");
+        pnlTitulo.getStyleClass().add("panel-primary");
+        pnlTitulo.setBody(bdpPrincipal);
+        escena=new Scene(pnlTitulo);
+        escena.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
     }
 
     private void InicializarMesas(){
@@ -96,6 +114,33 @@ public class Taqueria extends Stage {
     private void InicializarBebidas(){
         //Pendiente
     }
+    private void Venta(String id){
+        //Hay que actualizar las ventas que tiene el empleado que vendió
+        EmpleadoDAO objEmp=new EmpleadoDAO();
+        String query="SELECT * FROM empleado where idEmpleado="+id;
+        try{
+            Statement stmt=Conexion.connection.createStatement();
+            ResultSet res=stmt.executeQuery(query);
+            while(res.next()){
+                objEmp.setIdEmpleado(res.getInt("idEmpleado"));
+                objEmp.setNomEmpleado(res.getString("nomEmpleado"));
+                objEmp.setRfcEmpleado(res.getString("rfcEmpleado"));
+                objEmp.setSalario(res.getFloat("salario"));
+                objEmp.setTelefono(res.getString("telefono"));
+                objEmp.setDireccion(res.getString("direccion"));
+                objEmp.setVentas(res.getInt("ventas")+1);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        query="UPDATE empleado SET nomEmpleado='"+objEmp.getNomEmpleado()+"',rfcEmpleado='"+objEmp.getRfcEmpleado()+"',salario="+objEmp.getSalario()+",telefono='"+objEmp.getTelefono()+"',direccion='"+objEmp.getDireccion()+"',ventas="+objEmp.getVentas()+" WHERE idEmpleado="+objEmp.getIdEmpleado();
+        try{
+            Statement stmt=Conexion.connection.createStatement();
+            stmt.executeUpdate(query);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
 }
 
 class Login extends Stage{
@@ -121,13 +166,13 @@ class Login extends Stage{
             @Override
             public void handle(KeyEvent event) {
                 if (event.getCode() == KeyCode.ENTER){
-                    Confirmar(pwdfLogin);
+                    Confirmar();
                 }
             }
         });
 
         btnConfirmar=new Button("Confirmar");
-        btnConfirmar.setOnAction(event -> Confirmar(pwdfLogin));
+        btnConfirmar.setOnAction(event -> Confirmar());
 
         vPrincipal=new VBox(lblLogin,pwdfLogin,btnConfirmar);
         vPrincipal.setAlignment(Pos.CENTER);
@@ -135,8 +180,8 @@ class Login extends Stage{
         vPrincipal.setId("login");
         escena=new Scene(vPrincipal,200,150);
     }
-    private void Confirmar(PasswordField pwdf){
-        if(!pwdf.getText().isEmpty() && pwdf.getText().equals(passwd)){
+    private void Confirmar(){
+        if(!pwdfLogin.getText().isEmpty() && pwdfLogin.getText().equals(passwd)){
             Acceder();
         }else{
             Alert alert=new Alert(Alert.AlertType.CONFIRMATION);
@@ -146,7 +191,7 @@ class Login extends Stage{
             Optional<ButtonType> result = alert.showAndWait();
             if(!(result.get()==ButtonType.OK)){
                 this.close();
-            }
+            }else{pwdfLogin.clear();}
         }
     }
     private void Acceder(){

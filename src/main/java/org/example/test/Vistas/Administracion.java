@@ -24,8 +24,10 @@ public class Administracion extends Stage {
         //Botones
         btnEmpleados=new Button("Empleados");
         btnEmpleados.setOnAction(event -> AdminEmpleados());
-        btnAntojitos=new Button("...");
-        btnBebidas=new Button("...");
+        btnAntojitos=new Button("Antojitos");
+        btnAntojitos.setOnAction(event -> AdminAntojitos());
+        btnBebidas=new Button("Bebidas");
+        btnBebidas.setOnAction(event -> AdminBebidas());
         btnSalir=new Button("Salir");
         btnSalir.setOnAction(event -> this.close());
 
@@ -41,6 +43,14 @@ public class Administracion extends Stage {
 
     private void AdminEmpleados(){
         new EmpleadoTaqueria();
+        this.close();
+    }
+    private void AdminAntojitos(){
+        new AntojitosTaqueria();
+        this.close();
+    }
+    private void AdminBebidas(){
+        new BebidasTaqueria();
         this.close();
     }
 }
