@@ -22,7 +22,6 @@ public class AntojitosTaqueria extends Stage {
     private BorderPane bdpPrincipal;
     private Button btnAgregarComida, btnRegresar;
     private TableView<AntojitoDAO> tbvAntojito;
-    private AntojitoDAO objAntImg;
     public AntojitosTaqueria(){
         CrearUI();
         this.setTitle("Taquería los Inges :)");

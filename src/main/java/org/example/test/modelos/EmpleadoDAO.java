@@ -3,11 +3,14 @@ import com.mysql.cj.protocol.Resultset;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Optional;
 
 public class EmpleadoDAO implements Serializable{
     private int idEmpleado;
@@ -120,6 +123,12 @@ public class EmpleadoDAO implements Serializable{
             }
         }catch(Exception e){
             e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Algo salió mal...");
+            alert.setContentText("Ha ocurrido algún error al intentar acceder a la base de datos.");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK){}
         }
         return  listaEmp;
     }

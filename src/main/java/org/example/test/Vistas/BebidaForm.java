@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.example.test.components.ConvertidorImagen;
 import org.example.test.modelos.BebidaDAO;
 import org.example.test.modelos.Conexion;
 import org.example.test.modelos.EmpleadoDAO;
@@ -53,12 +54,12 @@ public class BebidaForm extends Stage {
         escena=new Scene(vPrincipal);
     }
     private void LlenarForm(){
-        arrTxtCampos[0].setText(objBeb.getNombre());
-        arrTxtCampos[1].setText(objBeb.getCve()+"");
-        arrTxtCampos[2].setText(String.valueOf(objBeb.getPrecioUnitario()));
-        arrTxtCampos[3].setText(String.valueOf(objBeb.getExistencia()));
-        arrTxtCampos[4].setText(objBeb.getDescripcion());
-        arrTxtCampos[5].setText(objBeb.getRuta());
+        arrTxtCampos[0].setText((objBeb.getCve()==0)?"":objBeb.getNombre());
+        arrTxtCampos[1].setText((objBeb.getCve()==0)?"":objBeb.getCve()+"");
+        arrTxtCampos[2].setText((objBeb.getCve()==0)?"":String.valueOf(objBeb.getPrecioUnitario()));
+        arrTxtCampos[3].setText((objBeb.getCve()==0)?"":String.valueOf(objBeb.getExistencia()));
+        arrTxtCampos[4].setText((objBeb.getCve()==0)?"":objBeb.getDescripcion());
+        arrTxtCampos[5].setText((objBeb.getCve()==0)?"":objBeb.getRuta().replace("\\\\","\\"));
     }
     private void GuardarBebida() {
         objBeb.setNombre((arrTxtCampos[0].getText()));
@@ -79,25 +80,11 @@ public class BebidaForm extends Stage {
         }
         objBeb.setDescripcion(arrTxtCampos[4].getText());
         flag = !objBeb.getDescripcion().isEmpty();//Revisar que no esté vacío
-        objBeb.setRuta(arrTxtCampos[5].getText());
-        flag = ExisteImagen();//Revisar que la imagen exista
-        if (sobreEscribir){
-            objBeb.INSERTAR();
-            tbvBebidas.setItems(objBeb.CONSULTAR());
-            tbvBebidas.refresh();
-            arrTxtCampos[0].clear();
-            arrTxtCampos[1].clear();
-            arrTxtCampos[2].clear();
-            arrTxtCampos[3].clear();
-            arrTxtCampos[4].clear();
-        }else{
-            Alert alert=new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("ATENCIÓN!");
-            alert.setHeaderText("Clave Existente");
-            alert.setContentText("La clave que ha ingresado ya existe.\n¿Desea sobreescribir el registro asociado a esta clave?");
-            Optional<ButtonType> result = alert.showAndWait();
-            if(!(result.get()==ButtonType.OK)){
-                objBeb.ACTUALIZAR();
+        objBeb.setRuta(arrTxtCampos[5].getText().replace("\\","\\\\"));
+        flag = ValidarImagen(objBeb.getRuta());//Revisar que la imagen exista
+        if(flag){
+            if (sobreEscribir){
+                objBeb.INSERTAR();
                 tbvBebidas.setItems(objBeb.CONSULTAR());
                 tbvBebidas.refresh();
                 arrTxtCampos[0].clear();
@@ -105,13 +92,39 @@ public class BebidaForm extends Stage {
                 arrTxtCampos[2].clear();
                 arrTxtCampos[3].clear();
                 arrTxtCampos[4].clear();
+                arrTxtCampos[5].clear();
+            }else{
+                Alert alert=new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("ATENCIÓN!");
+                alert.setHeaderText("Clave Existente");
+                alert.setContentText("La clave que ha ingresado ya existe.\n¿Desea sobreescribir el registro asociado a esta clave?");
+                Optional<ButtonType> result = alert.showAndWait();
+                if(result.get()==ButtonType.OK){
+                    objBeb.ACTUALIZAR();
+                    tbvBebidas.setItems(objBeb.CONSULTAR());
+                    tbvBebidas.refresh();
+                }
             }
+        }else {
+            Alert alert=new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR!");
+            alert.setHeaderText("Datos incorrectos");
+            alert.setContentText("Puede que algún dato que ingresó no corresponde a lo esperado o la imagen es demasiado pesada.\nRevise que la información sea correcta y que la imagen sea menor a 65KB");
+            Optional<ButtonType> result = alert.showAndWait();
+            if(result.get()==ButtonType.OK){}
         }
-
     }
-    private boolean ExisteImagen(){
-        File file=new File(objBeb.getRuta());
-        return file.exists();
+    private boolean ValidarImagen(String ruta){
+        boolean flag=false;
+        ConvertidorImagen conv=new ConvertidorImagen(ruta);
+        if(conv.existe){
+            String base64=conv.A_Base64();
+            int i;
+            for(i=0; i<base64.length();i++){}
+            if(i<65500)//Corroborar que sea posible guardar la imagen en el text
+                flag=true;
+        }
+        return flag;
     }
     private boolean CompararCve(){
         boolean flag=true;

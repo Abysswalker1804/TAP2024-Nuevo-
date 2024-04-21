@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.example.test.components.ConvertidorImagen;
 import org.example.test.modelos.AntojitoDAO;
 import org.example.test.modelos.Conexion;
 import org.example.test.modelos.EmpleadoDAO;
@@ -28,6 +29,7 @@ public class AntojitoForm extends Stage {
     private String[] arPrompts={"Nombre del producto","Clave de 1 caracter","Precio unitario","Existencia","Descripcion","Ruta absoluta de la imagen"};
     private Button btnGuardar;
     private boolean flag=false, sobreEscribir;
+
     public AntojitoForm(TableView<AntojitoDAO> tbvAntoj, AntojitoDAO objAnt){
         tbvAntojitos=tbvAntoj;
         this.objAnt=(objAnt==null)?new AntojitoDAO():objAnt;
@@ -53,12 +55,12 @@ public class AntojitoForm extends Stage {
         escena=new Scene(vPrincipal);
     }
     private void LlenarForm(){
-        arrTxtCampos[0].setText(objAnt.getNombre());
-        arrTxtCampos[1].setText(objAnt.getCve()+"");
-        arrTxtCampos[2].setText(String.valueOf(objAnt.getPrecioUnitario()));
-        arrTxtCampos[3].setText(String.valueOf(objAnt.getExistencia()));
-        arrTxtCampos[4].setText(objAnt.getDescripcion());
-        arrTxtCampos[5].setText(objAnt.getRuta());
+        arrTxtCampos[0].setText((objAnt.getCve()==0)?"":objAnt.getNombre());
+        arrTxtCampos[1].setText((objAnt.getCve()==0)?"":objAnt.getCve()+"");
+        arrTxtCampos[2].setText((objAnt.getCve()==0)?"":String.valueOf(objAnt.getPrecioUnitario()));
+        arrTxtCampos[3].setText((objAnt.getCve()==0)?"":String.valueOf(objAnt.getExistencia()));
+        arrTxtCampos[4].setText((objAnt.getCve()==0)?"":objAnt.getDescripcion());
+        arrTxtCampos[5].setText((objAnt.getCve()==0)?"":objAnt.getRuta().replace("\\\\","\\"));
     }
     private void GuardarAntojito() {
         objAnt.setNombre((arrTxtCampos[0].getText()));
@@ -80,24 +82,10 @@ public class AntojitoForm extends Stage {
         objAnt.setDescripcion(arrTxtCampos[4].getText());
         flag = !objAnt.getDescripcion().isEmpty();//Revisar que no esté vacío
         objAnt.setRuta(arrTxtCampos[5].getText().replace("\\","\\\\"));
-        flag = ExisteImagen();//Revisar que la imagen exista
-        if (sobreEscribir){
-            objAnt.INSERTAR();
-            tbvAntojitos.setItems(objAnt.CONSULTAR());
-            tbvAntojitos.refresh();
-            arrTxtCampos[0].clear();
-            arrTxtCampos[1].clear();
-            arrTxtCampos[2].clear();
-            arrTxtCampos[3].clear();
-            arrTxtCampos[4].clear();
-        }else{
-            Alert alert=new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("ATENCIÓN!");
-            alert.setHeaderText("Clave Existente");
-            alert.setContentText("La clave que ha ingresado ya existe.\n¿Desea sobreescribir el registro asociado a esta clave?");
-            Optional<ButtonType> result = alert.showAndWait();
-            if(!(result.get()==ButtonType.OK)){
-                objAnt.ACTUALIZAR();
+        flag = ValidarImagen(objAnt.getRuta());//Revisar que la imagen exista
+        if(flag){
+            if (sobreEscribir){
+                objAnt.INSERTAR();
                 tbvAntojitos.setItems(objAnt.CONSULTAR());
                 tbvAntojitos.refresh();
                 arrTxtCampos[0].clear();
@@ -105,13 +93,39 @@ public class AntojitoForm extends Stage {
                 arrTxtCampos[2].clear();
                 arrTxtCampos[3].clear();
                 arrTxtCampos[4].clear();
+                arrTxtCampos[5].clear();
+            }else{
+                Alert alert=new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("ATENCIÓN!");
+                alert.setHeaderText("Clave Existente");
+                alert.setContentText("La clave que ha ingresado ya existe.\n¿Desea sobreescribir el registro asociado a esta clave?");
+                Optional<ButtonType> result = alert.showAndWait();
+                if(result.get()==ButtonType.OK){
+                    objAnt.ACTUALIZAR();
+                    tbvAntojitos.setItems(objAnt.CONSULTAR());
+                    tbvAntojitos.refresh();
+                }
             }
+        }else{
+            Alert alert=new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR!");
+            alert.setHeaderText("Datos incorrectos");
+            alert.setContentText("Puede que algún dato que ingresó no corresponde a lo esperado o la imagen es demasiado pesada.\nRevise que la información sea correcta y que la imagen sea menor a 65KB");
+            Optional<ButtonType> result = alert.showAndWait();
+            if(result.get()==ButtonType.OK){}
         }
-
     }
-    private boolean ExisteImagen(){
-        File file=new File(objAnt.getRuta());
-        return file.exists();
+    private boolean ValidarImagen(String ruta){
+        boolean flag=false;
+        ConvertidorImagen conv=new ConvertidorImagen(ruta);
+        if(conv.existe){
+            String base64=conv.A_Base64();
+            int i;
+            for(i=0; i<base64.length();i++){}
+            if(i<65500)//Corroborar que sea posible guardar la imagen en el text
+                flag=true;
+        }
+        return flag;
     }
     private boolean CompararCve(){
         boolean flag=true;
@@ -147,4 +161,5 @@ public class AntojitoForm extends Stage {
         }
         return flag;
     }
+
 }

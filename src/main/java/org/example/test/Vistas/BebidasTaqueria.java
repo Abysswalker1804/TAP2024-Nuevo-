@@ -8,10 +8,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import javafx.util.Callback;
-import org.example.test.components.ButtonCell;
-import org.example.test.components.ButtonCellAnt;
 import org.example.test.components.ButtonCellBeb;
-import org.example.test.components.ImageViewCell;
 import org.example.test.modelos.BebidaDAO;
 import org.kordamp.bootstrapfx.BootstrapFX;
 import org.kordamp.bootstrapfx.scene.layout.Panel;
@@ -52,11 +49,11 @@ public class BebidasTaqueria extends Stage {
         pnlPrincipal.getStyleClass().add("panel-primary");
         pnlPrincipal.setBody(bdpPrincipal);
 
-        escena=new Scene(pnlPrincipal,700,400);
+        escena=new Scene(pnlPrincipal,800,400);
         escena.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
     }
     private void CrearTable(){
-        BebidaDAO objEmp=new BebidaDAO();
+        BebidaDAO objBeb=new BebidaDAO();
         tbvBebida=new TableView<BebidaDAO>();
 
         TableColumn<BebidaDAO,String> tbcNombre=new TableColumn<>("Nombre");
@@ -82,6 +79,16 @@ public class BebidasTaqueria extends Stage {
             }
         });*/
 
+        TableColumn<BebidaDAO, String> tbcImg=new TableColumn<>("Imagen");
+        tbcImg.setCellFactory(
+                new Callback<TableColumn<BebidaDAO, String>, TableCell<BebidaDAO, String>>() {
+                    @Override
+                    public TableCell<BebidaDAO, String> call(TableColumn<BebidaDAO, String> param) {
+                        return new ButtonCellBeb(3);
+                    }
+                }
+        );
+
         TableColumn<BebidaDAO,String> tbcEditar = new TableColumn<BebidaDAO,String>("EDITAR");
         tbcEditar.setCellFactory(
                 new Callback<TableColumn<BebidaDAO, String>, TableCell<BebidaDAO, String>>() {
@@ -102,8 +109,8 @@ public class BebidasTaqueria extends Stage {
                 }
         );
         //...
-        tbvBebida. getColumns().addAll(tbcNombre,tbcCve,tbcPrecio,tbcExistencia,tbcDescripcion/*,tbcImagen*/,tbcEditar,tbcEliminar);
-        tbvBebida.setItems(objEmp.CONSULTAR());
+        tbvBebida. getColumns().addAll(tbcNombre,tbcCve,tbcPrecio,tbcExistencia,tbcDescripcion,tbcImg,tbcEditar,tbcEliminar);
+        tbvBebida.setItems(objBeb.CONSULTAR());
 
     }
     private void Regresar(){

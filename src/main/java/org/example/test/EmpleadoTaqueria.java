@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import org.example.test.Vistas.Administracion;
+import org.example.test.Vistas.Taqueria;
 import org.example.test.components.ButtonCell;
 import org.example.test.modelos.EmpleadoDAO;
 import org.kordamp.bootstrapfx.BootstrapFX;

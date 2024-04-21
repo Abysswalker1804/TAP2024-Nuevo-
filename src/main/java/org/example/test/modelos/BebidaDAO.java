@@ -2,10 +2,19 @@ package org.example.test.modelos;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.image.Image;
+import org.example.test.components.ConvertidorImagen;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.sql.Blob;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Optional;
 
 public class BebidaDAO {
     private char cve;
@@ -15,6 +24,17 @@ public class BebidaDAO {
     private byte[] imagen;//Cambiar a mediumblob
     private String nombre;//Añadir nombre a la tabla
     private String ruta;
+    private Image img;
+    private ConvertidorImagen conv;
+
+    public Image getImg() {
+        return img;
+    }
+
+    public void setImg(Image img) {
+        this.img = img;
+    }
+
     public char getCve() {
         return cve;
     }
@@ -72,25 +92,46 @@ public class BebidaDAO {
     }
 
     public void INSERTAR(){
-        String query="INSERT INTO bebida(cve,precioUnitario,existencia,descripcion,imagen,nombre,ruta) VALUES('"+cve+"',"+precioUnitario+","+existencia+",'"+descripcion+"',LOAD_FILE('"+ruta+"'),'"+nombre+"','"+ruta+"')";
-        try{
-            Statement stmt=Conexion.connection.createStatement();//El statement se usa para interactuar con sql
-            stmt.executeUpdate(query);//Usar para insertar, actualizar o eliminar
-        }catch(Exception e){
-            e.printStackTrace();
+        conv=new ConvertidorImagen(ruta);
+        if(conv.existe){
+            String query="INSERT INTO bebida VALUES('"+cve+"',"+precioUnitario+","+existencia+",'"+descripcion+"','"+conv.A_Base64()+"','"+nombre+"','"+ruta+"')";
+            try{
+                Statement stmt=Conexion.connection.createStatement();//El statement se usa para interactuar con sql
+                stmt.executeUpdate(query);//Usar para insertar, actualizar o eliminar
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }else{
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Algo salió mal...");
+            alert.setContentText("No se encontró el archivo especificado. Revíse nuevamente.");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK){}
         }
+
     }
     public void ACTUALIZAR(){
-        String query="UPDATE bebida SET precioUnitario="+precioUnitario+",existencia="+existencia+",descripcion='"+descripcion+"',imagen=LOAD_FILE('"+ruta+"'),nombre='"+nombre+"',ruta='"+ruta+"' WHERE cve="+cve;
-        try{
-            Statement stmt=Conexion.connection.createStatement();
-            stmt.executeUpdate(query);
-        }catch(Exception e){
-            e.printStackTrace();
+        conv=new ConvertidorImagen(ruta);
+        if(conv.existe){
+            String query="UPDATE bebida SET precioUnitario="+precioUnitario+",existencia="+existencia+",descripcion='"+descripcion+"',imagen='"+conv.A_Base64()+"',nombre='"+nombre+"',ruta='"+ruta+"' WHERE cve='"+cve+"'";
+            try{
+                Statement stmt=Conexion.connection.createStatement();
+                stmt.executeUpdate(query);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }else{
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Algo salió mal...");
+            alert.setContentText("No se encontró el archivo especificado. Revíse nuevamente.");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK){}
         }
     }
     public void ELIMINAR(){
-        String query="DELETE FROM bebida WHERE cve="+cve;
+        String query="DELETE FROM bebida WHERE cve='"+cve+"'";
         try{
             Statement stmt=Conexion.connection.createStatement();
             stmt.executeUpdate(query);
@@ -113,22 +154,18 @@ public class BebidaDAO {
                 objBeb.descripcion=res.getString("descripcion");
                 objBeb.nombre=res.getString("nombre");
                 objBeb.ruta=(res.getString("ruta").replace("\\","\\\\"));
-                while(res.next()){
-                    try{
-                        objBeb.imagen=null;
-                        Blob blob= res.getBlob("imagen");
-                        objBeb.imagen= blob.getBytes(1,(int)blob.length());
-                    }catch (NullPointerException npe){
-                        System.out.println("Blob está vacío");
-                    }
-                    /* Para poner la imagen:
-                    * Image img = new Image(new ByteArrayInputStream(objBeb.imagen));
-                      imageView = new ImageView(img);*/
-                }
+                conv=new ConvertidorImagen();
+                objBeb.img=conv.A_Imagen(res.getString("imagen"));
                 listaBeb.add(objBeb);
             }
         }catch(Exception e){
             e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Algo salió mal...");
+            alert.setContentText("Ha ocurrido algún error al intentar acceder a la base de datos.");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK){}
         }
         return  listaBeb;
     }

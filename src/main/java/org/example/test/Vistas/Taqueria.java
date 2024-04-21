@@ -6,6 +6,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -17,12 +19,18 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.event.EventHandler;
 import org.example.test.EmpleadoTaqueria;
+import org.example.test.components.ConvertidorImagen;
+import org.example.test.modelos.AntojitoDAO;
+import org.example.test.modelos.BebidaDAO;
 import org.example.test.modelos.Conexion;
 import org.example.test.modelos.EmpleadoDAO;
 import org.kordamp.bootstrapfx.BootstrapFX;
 import org.kordamp.bootstrapfx.scene.layout.Panel;
 
-import java.awt.*;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.sql.Blob;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Optional;
@@ -31,13 +39,19 @@ public class Taqueria extends Stage {
     private Panel pnlTitulo;
     private Scene escena;
     private BorderPane bdpPrincipal;
-    private VBox vLeft;
-    private HBox hTop;
-    private GridPane gdpMesas, gdpAntojitos, gdpBebidas;
+    private VBox vLeft, vRight, vComida, vBebida;
+    private HBox hProductos, hProdLabels;
+    private ScrollPane scrpProductos;
+    private GridPane gdpMesas;
     private Button[][] Mesas=new Button[4][3];
-    private Button[] Bebidas=new Button[3];
-    private Button[] Antojitos=new Button[3];
-    private Button btnMesaAnt, btnLogin;
+    private ButtonMenu[] btnBebida;
+    private ButtonMenu[] btnComida;
+    private Button btnMesaAnt;
+    private MenuBar mbrPrincipal;
+    private Menu menAdministrar, menActualizar, menSalir;
+    private MenuItem mitAdmin, mitAct, mitSalir;
+    private Label lblComida, lblBebida;
+    private TableView tbvOrden;
     public Taqueria(){
         CrearUI();
         this.setTitle("Taquería");
@@ -49,23 +63,46 @@ public class Taqueria extends Stage {
     private void CrearUI(){
         //BorderPane
         bdpPrincipal=new BorderPane();
-        //Login
-        btnLogin=new Button("Administrar");
-        btnLogin.setOnAction(event -> new Login());
-        bdpPrincipal.setTop(btnLogin);
+        //Menu principal
+        mitAdmin=new MenuItem("Administrar");
+        mitAdmin.setOnAction(event -> new Login());
+        mitAct=new MenuItem("Actualizar");
+        mitAct.setOnAction(event -> ActualizarTaqueria());
+        mitSalir=new MenuItem("Salir");
+        mitSalir.setOnAction(event -> System.exit(0));
+
+        menAdministrar=new Menu("Administrar");
+        menAdministrar.getItems().add(mitAdmin);
+        menActualizar=new Menu("Actualizar");
+        menActualizar.getItems().add(mitAct);
+        menSalir=new Menu("Salir");
+        menSalir.getItems().add(mitSalir);
+
+        mbrPrincipal=new MenuBar();
+        mbrPrincipal.getMenus().addAll(menAdministrar,menActualizar,menSalir);
+        bdpPrincipal.setTop(mbrPrincipal);
         //Mesas
         gdpMesas=new GridPane();
         InicializarMesas();
         //Izquierda
         vLeft=new VBox(gdpMesas);
         vLeft.setAlignment(Pos.CENTER);
-        //Antojitos
-        gdpAntojitos=new GridPane();
-        InicializarBebidas();
-        //hTop
-        hTop=new HBox();
-
         bdpPrincipal.setLeft(vLeft);
+        //Antojitos
+        InicializarProductos();
+        //Derecha
+        lblComida=new Label("Tacos");
+        lblComida.setId("lbl-productos");
+        lblBebida=new Label("Bebidas");
+        lblBebida.setId("lbl-productos");
+        hProdLabels=new HBox(lblComida,lblBebida);
+        hProdLabels.setSpacing(150);
+        vRight=new VBox(hProdLabels,scrpProductos);
+        vRight.setAlignment(Pos.CENTER);
+        bdpPrincipal.setRight(vRight);
+        //Center - TableView
+        CrearTablaOrden();
+
         //Panel
         pnlTitulo=new Panel("Taquería los Inges");
         pnlTitulo.getStyleClass().add("panel-primary");
@@ -111,8 +148,67 @@ public class Taqueria extends Stage {
         }
         btnMesaAnt=btn;
     }
-    private void InicializarBebidas(){
-        //Pendiente
+    private void InicializarProductos(){
+        AntojitoDAO [] comida=null;
+        BebidaDAO [] bebida=null;
+        try{
+            String query="SELECT COUNT(*) AS total_registros FROM antojito";
+            PreparedStatement pst=Conexion.connection.prepareStatement(query);
+            ResultSet res= pst.executeQuery();
+            while(res.next()){comida= new AntojitoDAO[res.getInt(1)];}
+            //System.out.println("Comida: "+comida.length);
+            btnComida=new ButtonMenu[comida.length];
+
+            query="SELECT COUNT(*) AS total_registros FROM bebida";
+            pst=Conexion.connection.prepareStatement(query);
+            res= pst.executeQuery();
+            while(res.next()){bebida= new BebidaDAO[res.getInt(1)];}
+            //System.out.println("Comida: "+bebida.length);
+            btnBebida=new ButtonMenu[bebida.length];
+
+            query="SELECT * FROM antojito";
+            pst=Conexion.connection.prepareStatement(query);
+            res=pst.executeQuery();
+            for(int i=0; i< comida.length && res.next();i++){
+                comida[i]=new AntojitoDAO();
+                comida[i].setCve(res.getString("cve").charAt(0));
+                comida[i].setPrecioUnitario(res.getDouble("precioUnitario"));
+                comida[i].setExistencia(res.getInt("existencia"));
+                comida[i].setDescripcion(res.getString("descripcion"));
+                comida[i].setNombre(res.getString("nombre"));
+                comida[i].setRuta(res.getString("ruta").replace("\\","\\\\"));
+                ConvertidorImagen conv=new ConvertidorImagen();
+                comida[i].setImg(conv.A_Imagen(res.getString("imagen")));
+                btnComida[i]=new ButtonMenu(comida[i].getCve(),comida[i].getNombre(),comida[i].getImg());
+                btnComida[i].setPrefSize(180,70);
+            }
+
+            query="SELECT * FROM bebida";
+            pst=Conexion.connection.prepareStatement(query);
+            res=pst.executeQuery();
+            for(int i=0; i< bebida.length && res.next();i++){
+                bebida[i]=new BebidaDAO();
+                bebida[i].setCve(res.getString("cve").charAt(0));
+                bebida[i].setPrecioUnitario(res.getDouble("precioUnitario"));
+                bebida[i].setExistencia(res.getInt("existencia"));
+                bebida[i].setDescripcion(res.getString("descripcion"));
+                bebida[i].setNombre(res.getString("nombre"));
+                bebida[i].setRuta(res.getString("ruta").replace("\\","\\\\"));
+                ConvertidorImagen conv=new ConvertidorImagen();
+                bebida[i].setImg(conv.A_Imagen(res.getString("imagen")));
+                btnBebida[i]=new ButtonMenu(bebida[i].getCve(),bebida[i].getNombre(),bebida[i].getImg());
+                btnBebida[i].setPrefSize(180,70);
+            }
+            vComida=new VBox(btnComida);
+            vBebida=new VBox(btnBebida);
+            hProductos=new HBox(vComida,vBebida);
+            scrpProductos=new ScrollPane(hProductos);
+            scrpProductos.setMaxWidth(370);
+            scrpProductos.setMaxHeight(210);
+        }catch (Exception e){
+            e.printStackTrace();
+            System.out.println("Hubo un error.");
+        }
     }
     private void Venta(String id){
         //Hay que actualizar las ventas que tiene el empleado que vendió
@@ -140,6 +236,13 @@ public class Taqueria extends Stage {
         }catch(Exception e){
             e.printStackTrace();
         }
+    }
+    private void CrearTablaOrden(){
+        //Pendiente
+    }
+    private void ActualizarTaqueria(){
+        new Taqueria();
+        this.close();
     }
 }
 
@@ -209,3 +312,16 @@ class Login extends Stage{
     }
 }
 
+class ButtonMenu extends Button{
+    private char CVE;
+    private String NOMBRE;
+    public ButtonMenu(char cve, String nombre, Image img){
+        super.setText(nombre);
+        CVE=cve;
+        NOMBRE=nombre;
+        ImageView imv=new ImageView(img);
+        imv.setFitHeight(60);
+        imv.setFitWidth(60);
+        this.setGraphic(imv);
+    }
+}

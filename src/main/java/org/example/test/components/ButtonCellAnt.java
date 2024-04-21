@@ -1,5 +1,6 @@
 package org.example.test.components;
 
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -8,6 +9,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.test.EmpleadosForm;
 import org.example.test.Vistas.AntojitoForm;
+import org.example.test.Vistas.Taqueria;
 import org.example.test.modelos.AntojitoDAO;
 
 import java.io.ByteArrayInputStream;
@@ -41,7 +43,7 @@ public class ButtonCellAnt extends TableCell<AntojitoDAO, String> {
                     tbvAntojitos.refresh();
                 }
             }else{//Mostrar imagen
-                new VentanaImagen(objAnt);
+                new VentanaImagen(objAnt.getImg());
             }
         }
     }
@@ -61,10 +63,13 @@ class VentanaImagen extends Stage {
     private ImageView imvImagen;
     private VBox vPrincipal;
     private Scene escena;
-    public VentanaImagen(AntojitoDAO objAnt){
-        img= new Image(new ByteArrayInputStream(objAnt.getImagen()));
-        imvImagen=new ImageView(img);
+    public VentanaImagen(Image img){
+        this.img= img;
+        imvImagen=new ImageView(this.img);
+        imvImagen.setFitWidth(100);
+        imvImagen.setFitHeight(100);
         vPrincipal=new VBox(imvImagen);
+        vPrincipal.setAlignment(Pos.CENTER);
         this.setTitle("Vista previa");
         escena=new Scene(vPrincipal);
         this.setScene(escena);
