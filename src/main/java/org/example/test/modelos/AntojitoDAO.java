@@ -7,10 +7,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import org.example.test.components.ConvertidorImagen;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.sql.Blob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -141,7 +137,6 @@ public class AntojitoDAO {
         }
     }
     public ObservableList<AntojitoDAO> CONSULTAR(){
-
         ObservableList<AntojitoDAO> listaAnt= FXCollections.observableArrayList();
         String query="SELECT * FROM antojito";
         try{
@@ -171,5 +166,27 @@ public class AntojitoDAO {
         }
         return  listaAnt;
     }
-
+    public ObservableList<AntojitoDAO> CONSULTAR_ORDEN(char clave){
+        ObservableList<AntojitoDAO> listaAnt= FXCollections.observableArrayList();
+        String query="SELECT nombre,precioUnitario FROM antojito WHERE cve='"+clave+"'";
+        try{
+            AntojitoDAO objAnt;
+            PreparedStatement pst=Conexion.connection.prepareStatement(query);
+            ResultSet res=pst.executeQuery();
+            while(res.next()){
+                objAnt=new AntojitoDAO();
+                objAnt.precioUnitario=res.getDouble("precioUnitario");
+                objAnt.nombre=res.getString("nombre");
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Algo salió mal...");
+            alert.setContentText("Ha ocurrido algún error al intentar acceder a la base de datos.");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK){}
+        }
+        return  listaAnt;
+    }
 }

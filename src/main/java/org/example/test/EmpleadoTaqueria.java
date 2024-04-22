@@ -97,7 +97,6 @@ public class EmpleadoTaqueria extends Stage{
         //...
         tbvEmpleados. getColumns().addAll(tbcNomEmp,tbcRfcEmp,tbcSueldoEmp,tbcTelEmp,tbcDirEmp,tbcEditar,tbcEliminar);
         tbvEmpleados.setItems(objEmp.CONSULTAR());
-
     }
 
     private void Regresar(){

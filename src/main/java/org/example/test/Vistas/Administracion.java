@@ -3,6 +3,10 @@ package org.example.test.Vistas;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -10,9 +14,10 @@ import org.example.test.EmpleadoTaqueria;
 
 public class Administracion extends Stage {
     private Scene escena;
-    private HBox hAdmin;
-    private VBox vAdmin;
-    private Button btnEmpleados, btnAntojitos, btnBebidas, btnSalir;
+    private BorderPane bdpPricipal;
+    private MenuBar mnbPrincipal;
+    private Menu menEmpleados, menProductos, menSalir;
+    private MenuItem mitEmpleados, mitVentas, mitAntojitos, mitBebidas, mitSalir;
     public Administracion(){
         CrearUI();
         this.setTitle("Administración");
@@ -21,24 +26,32 @@ public class Administracion extends Stage {
         this.show();
     }
     private void CrearUI(){
-        //Botones
-        btnEmpleados=new Button("Empleados");
-        btnEmpleados.setOnAction(event -> AdminEmpleados());
-        btnAntojitos=new Button("Antojitos");
-        btnAntojitos.setOnAction(event -> AdminAntojitos());
-        btnBebidas=new Button("Bebidas");
-        btnBebidas.setOnAction(event -> AdminBebidas());
-        btnSalir=new Button("Salir");
-        btnSalir.setOnAction(event -> this.close());
+        //Menu
+        mitEmpleados=new MenuItem("Empleados");
+        mitEmpleados.setOnAction(event -> AdminEmpleados());
+        mitVentas=new MenuItem("Mayor ventas");
+        mitVentas.setOnAction(event -> AdminVentas());
+        mitAntojitos=new MenuItem("Antojitos");
+        mitAntojitos.setOnAction(event -> AdminAntojitos());
+        mitBebidas=new MenuItem("Bebidas");
+        mitBebidas.setOnAction(event -> AdminBebidas());
+        mitSalir=new MenuItem("Salir");
+        mitSalir.setOnAction(event -> this.close());
 
-        hAdmin=new HBox(btnEmpleados, btnAntojitos, btnBebidas);
-        hAdmin.setAlignment(Pos.CENTER);
-        hAdmin.setSpacing(10);
-        vAdmin=new VBox(hAdmin,btnSalir);
-        vAdmin.setAlignment(Pos.CENTER);
-        vAdmin.setId("admin");
-        vAdmin.setSpacing(20);
-        escena=new Scene(vAdmin, 300, 150);
+        menEmpleados=new Menu("Empleados");
+        menEmpleados.getItems().addAll(mitEmpleados, mitVentas);
+        menProductos=new Menu("Productos");
+        menProductos.getItems().addAll(mitAntojitos, mitBebidas);
+        menSalir=new Menu("Salir");
+        menSalir.getItems().add(mitSalir);
+
+        mnbPrincipal=new MenuBar();
+        mnbPrincipal.getMenus().addAll(menEmpleados, menProductos, menSalir);
+
+        bdpPricipal=new BorderPane();
+        bdpPricipal.setTop(mnbPrincipal);
+        bdpPricipal.setId("admin");
+        escena=new Scene(bdpPricipal, 300, 70);
     }
 
     private void AdminEmpleados(){
@@ -51,6 +64,10 @@ public class Administracion extends Stage {
     }
     private void AdminBebidas(){
         new BebidasTaqueria();
+        this.close();
+    }
+    private void AdminVentas(){
+        new EmpleadoVentas();
         this.close();
     }
 }

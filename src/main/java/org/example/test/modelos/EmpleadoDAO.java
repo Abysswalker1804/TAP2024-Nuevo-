@@ -132,4 +132,29 @@ public class EmpleadoDAO implements Serializable{
         }
         return  listaEmp;
     }
+    public ObservableList<EmpleadoDAO> CONSULTAR_EMP_VENTAS(){
+        ObservableList<EmpleadoDAO> listaEmp= FXCollections.observableArrayList();
+        String query="SELECT idEmpleado,nomEmpleado,ventas FROM empleado WHERE ventas=(SELECT MAX(ventas) from empleado)";
+        try{
+            EmpleadoDAO objEmp;
+            Statement stmt=Conexion.connection.createStatement();
+            ResultSet res=stmt.executeQuery(query);
+            while(res.next()){
+                objEmp=new EmpleadoDAO();
+                objEmp.idEmpleado=res.getInt("idEmpleado");
+                objEmp.nomEmpleado=res.getString("nomEmpleado");
+                objEmp.ventas=res.getInt("ventas");
+                listaEmp.add(objEmp);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Algo salió mal...");
+            alert.setContentText("Ha ocurrido algún error al intentar acceder a la base de datos.");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK){}
+        }
+        return  listaEmp;
+    }
 }

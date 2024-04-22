@@ -169,4 +169,27 @@ public class BebidaDAO {
         }
         return  listaBeb;
     }
+    public ObservableList<BebidaDAO> CONSULTAR_ORDEN(char clave){
+        ObservableList<BebidaDAO> listaBeb= FXCollections.observableArrayList();
+        String query="SELECT nombre,precioUnitario FROM bebida WHERE cve='"+clave+"'";
+        try{
+            BebidaDAO objBeb;
+            PreparedStatement pst=Conexion.connection.prepareStatement(query);
+            ResultSet res=pst.executeQuery();
+            while(res.next()){
+                objBeb=new BebidaDAO();
+                objBeb.precioUnitario=res.getDouble("precioUnitario");
+                objBeb.nombre=res.getString("nombre");
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Algo salió mal...");
+            alert.setContentText("Ha ocurrido algún error al intentar acceder a la base de datos.");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK){}
+        }
+        return  listaBeb;
+    }
 }

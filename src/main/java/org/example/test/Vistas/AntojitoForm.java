@@ -65,20 +65,18 @@ public class AntojitoForm extends Stage {
     private void GuardarAntojito() {
         objAnt.setNombre((arrTxtCampos[0].getText()));
         flag = !objAnt.getNombre().isEmpty();//Revisar que no esté vacío
-        objAnt.setCve(arrTxtCampos[1].getText().charAt(0));
-        sobreEscribir = CompararCve();
+        try{
+            objAnt.setCve(arrTxtCampos[1].getText().charAt(0));
+            sobreEscribir = CompararCve();
+        }catch(Exception e){flag=false;}
         try {
             objAnt.setPrecioUnitario(Double.parseDouble(arrTxtCampos[2].getText()));
             flag = true;
-        } catch (Exception e) {
-            flag = false;
-        }
+        } catch (Exception e) {flag = false;}
         try {
             objAnt.setExistencia(Integer.parseInt(arrTxtCampos[3].getText()));
             flag = true;
-        } catch (Exception e) {
-            flag = false;
-        }
+        } catch (Exception e) {flag = false;}
         objAnt.setDescripcion(arrTxtCampos[4].getText());
         flag = !objAnt.getDescripcion().isEmpty();//Revisar que no esté vacío
         objAnt.setRuta(arrTxtCampos[5].getText().replace("\\","\\\\"));
