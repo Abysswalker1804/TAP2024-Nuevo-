@@ -60,7 +60,7 @@ public class OrdenDAO {
     }
 
     public void INSERTAR(){
-        String query="INSERT INTO orden VALUES("+numOrden+","+total+","+empleado+",'"+mesa+"',"+cliente+")";
+        String query="INSERT INTO orden VALUES("+numOrden+","+total+","+empleado+",'"+mesa+"')";
         try{
             Statement stmt=Conexion.connection.createStatement();//El statement se usa para interactuar con sql
             stmt.executeUpdate(query);//Usar para insertar, actualizar o eliminar

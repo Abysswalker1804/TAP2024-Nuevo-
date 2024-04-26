@@ -3,7 +3,7 @@ module org.example.test {
     requires javafx.fxml;
     //requires java.desktop;
 
-
+    opens org.example.test.components to javafx.base;
     opens org.example.test to javafx.fxml;
     exports org.example.test;
 
