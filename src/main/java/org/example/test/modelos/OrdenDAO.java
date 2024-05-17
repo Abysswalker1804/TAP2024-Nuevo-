@@ -15,6 +15,15 @@ public class OrdenDAO {
     private int empleado;
     private String mesa;//2 char
     private  int cliente;
+    private String descripcion;
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
 
     public int getNumOrden() {
         return numOrden;
@@ -60,7 +69,7 @@ public class OrdenDAO {
     }
 
     public void INSERTAR(){
-        String query="INSERT INTO orden VALUES("+numOrden+","+total+","+empleado+",'"+mesa+"')";
+        String query="INSERT INTO orden VALUES("+numOrden+","+total+","+empleado+",'"+mesa+"','"+descripcion+"')";
         try{
             Statement stmt=Conexion.connection.createStatement();//El statement se usa para interactuar con sql
             stmt.executeUpdate(query);//Usar para insertar, actualizar o eliminar

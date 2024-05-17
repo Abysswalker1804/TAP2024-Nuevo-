@@ -1,6 +1,6 @@
 package org.example.test.Vistas;
 
-import com.mysql.cj.xdevapi.Table;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -21,11 +21,13 @@ import javafx.event.EventHandler;
 import javafx.util.Callback;
 import org.example.test.components.BotonOrden;
 import org.example.test.components.ConvertidorImagen;
+import org.example.test.components.GeneratePDFFileIText;
 import org.example.test.components.OrdenGrafica;
 import org.example.test.modelos.*;
 import org.kordamp.bootstrapfx.BootstrapFX;
 import org.kordamp.bootstrapfx.scene.layout.Panel;
 
+import java.io.File;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -50,7 +52,7 @@ public class Taqueria extends Stage {
     private String [][] nomEmp;
     private Label lblComida, lblBebida, lblTotal, lblEmpAtiende;
     private OrdenDAO objOrd;
-    private String mesa;
+    private String mesa, empleadoRecibo;
     private double total = 0;
     private int cantAnt, empleado;
     private EmpleadoDAO objEmp = new EmpleadoDAO();
@@ -165,6 +167,7 @@ public class Taqueria extends Stage {
                 mitEmp[i].setOnAction(event ->{
                     empleado=Integer.parseInt(nomEmp[finalI][1]);
                     lblEmpAtiende.setText("Le atiende el empleado: "+nomEmp[finalI][0]);
+                    empleadoRecibo=nomEmp[finalI][0];
                 });
             }
         }catch(Exception e){ e.printStackTrace();}
@@ -299,15 +302,26 @@ public class Taqueria extends Stage {
             if (objEmp.getIdEmpleado() != 0) {
                 query = "UPDATE empleado SET nomEmpleado='" + objEmp.getNomEmpleado() + "',rfcEmpleado='" + objEmp.getRfcEmpleado() + "',salario=" + objEmp.getSalario() + ",telefono='" + objEmp.getTelefono() + "',direccion='" + objEmp.getDireccion() + "',ventas=" + (objEmp.getVentas() + 1) + " WHERE idEmpleado=" + objEmp.getIdEmpleado();
                 siError = false;
+                String [] reciboTxt=CrearRecibo(mesa);
                 try {
                     Statement stmt = Conexion.connection.createStatement();
                     stmt.executeUpdate(query);
                     objOrd = new OrdenDAO();
-                    objOrd.setNumOrden(1);
+                    objOrd.setNumOrden(DevolverOrden());
                     objOrd.setTotal(total);
                     objOrd.setEmpleado(objEmp.getIdEmpleado());//Empleado
                     objOrd.setMesa(mesa.replace("#",""));
+                    objOrd.setDescripcion(reciboTxt[0]+reciboTxt[1]);
                     objOrd.INSERTAR();
+                    //CrearPDF
+                    GeneratePDFFileIText pdf= new GeneratePDFFileIText();
+                    query="SELECT MAX(numOrden) FROM Orden";
+                    ResultSet res= stmt.executeQuery(query);
+                    int tempNumOrden=0;
+                    while(res.next()){tempNumOrden=res.getInt(1);}
+                    File arch=new File("C:\\Users\\tadeo\\JavaProjects\\Test\\recibosTaqueria\\recibo"+String.valueOf(tempNumOrden)+".pdf");
+                    pdf.createPDF(arch, reciboTxt[0],reciboTxt[1], objOrd.getTotal());
+                    EspacioOrdenes();
                 } catch (Exception e) {
                     e.printStackTrace();
                     siError = true;
@@ -325,6 +339,14 @@ public class Taqueria extends Stage {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK){}
         }
+    }
+    private int DevolverOrden(){
+        OrdenGrafica objTemp=tbvOrden.getSelectionModel().getSelectedItem();
+        int orden=0;
+        if(objTemp!=null){
+            orden=objTemp.getNumOrden();
+        }
+        return orden;
     }
 
     private void ActualizarTaqueria() {
@@ -389,6 +411,19 @@ public class Taqueria extends Stage {
         vCentro.setMaxWidth(500);
         vCentro.setMaxHeight(450);
         bdpPrincipal.setCenter(vCentro);
+    }
+    private String[] CrearRecibo(String mesa){
+        ObservableList<OrdenGrafica> listOrden=tbvOrden.getItems();
+        String [] recibo=new String [2];
+        recibo[0]="";
+        recibo[1]="";
+        for(OrdenGrafica objOrd: listOrden){
+            if(recibo[0].isEmpty()){
+                recibo[0]="No. Orden: "+objOrd.getNumOrden()+"\nEmpleado: "+empleadoRecibo+"\nMesa: "+mesa+"\n";
+            }
+            recibo[1]=recibo[1]+"Producto: "+objOrd.getNombre()+"\nCantidad: "+objOrd.getCant()+"\nPrecio: "+objOrd.getPrecioUnit()+"\n";
+        }
+        return recibo;
     }
 }
 //Fin de Taquería

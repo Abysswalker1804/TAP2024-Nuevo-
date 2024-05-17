@@ -10,6 +10,7 @@ import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.example.test.Vistas.Pista;
+import org.example.test.Vistas.SimImpresion;
 import org.example.test.Vistas.Taqueria;
 import org.example.test.components.Hilo;
 import org.example.test.modelos.Conexion;
@@ -19,8 +20,8 @@ import java.io.IOException;
 
 public class HelloApplication extends Application {
     private MenuBar mnbPrincipal;
-    private Menu menParcial1, menParcial2, menSalir;
-    private MenuItem mitCalculadora, mitSalir, mitMemorama, mitCuadroMagico, mitTaqueria, mitPista;
+    private Menu menParcial1, menParcial2, menParcial3,menSalir;
+    private MenuItem mitCalculadora, mitSalir, mitMemorama, mitCuadroMagico, mitTaqueria, mitPista, mitSimImpr;
     private BorderPane bdpPanel;
     @Override
     public void start(Stage stage) throws IOException {
@@ -58,6 +59,11 @@ public class HelloApplication extends Application {
         mitTaqueria.setOnAction(event -> new Taqueria());
         menParcial2.getItems().addAll(mitPista,mitTaqueria);
 
+        //Menú tercer Parcial
+        mitSimImpr=new MenuItem("Impresión");
+        mitSimImpr.setOnAction(event -> new SimImpresion());
+        menParcial3=new Menu("Tercer Parcial");
+        menParcial3.getItems().add(mitSimImpr);
 
         //Menú salir
         mitSalir=new MenuItem("Salir");
@@ -67,7 +73,7 @@ public class HelloApplication extends Application {
 
         //Menu Principal
         mnbPrincipal=new MenuBar();
-        mnbPrincipal.getMenus().addAll(menParcial1, menParcial2, menSalir);
+        mnbPrincipal.getMenus().addAll(menParcial1, menParcial2, menParcial3,menSalir);
     }
 
     public static void main(String[] args) {

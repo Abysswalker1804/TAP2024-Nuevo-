@@ -62,13 +62,13 @@ public class OrdenGrafica {
             precioUnit=res.getDouble("precioUnitario");
             existencia=res.getInt("existencia");
         }catch(Exception e){}
-        query="SELECT numOrden FROM orden;";
+        query="SELECT MAX(numOrden) FROM orden;";
         try{
             Statement stmt= Conexion.connection.createStatement();
             ResultSet res=stmt.executeQuery(query);
-            int contOrden=1;
-            while(res.next()){contOrden++;}
-            numOrden=contOrden;
+            int orden=0;
+            while(res.next()){orden=res.getInt(1);}
+            numOrden=orden+1;
         }catch(Exception e){}
         cant=1;
     }
